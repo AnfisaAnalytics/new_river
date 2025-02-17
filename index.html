@@ -1,0 +1,371 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Анализ данных маркетплейса</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Сначала подключаем Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+        <!-- Затем подключаем плагин datalabels -->
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+        <!-- И регистрируем плагин -->
+        <script>
+            Chart.register(ChartDataLabels);
+        </script>
+        <style>
+            :root {
+                /* Default theme colors */
+                --chart-color-1: #2563eb;
+                --chart-color-1-rgb: 37, 99, 235;
+                --chart-color-1-dark: #1d4ed8;
+                --chart-color-2: #3b82f6;
+                --chart-color-2-rgb: 59, 130, 246;
+                --chart-color-3: #60a5fa;
+                --chart-color-4: #93c5fd;
+                --chart-color-5: #bfdbfe;
+            }
+
+            /* Theme variations */
+            [data-theme="green"] {
+                --chart-color-1: #059669;
+                --chart-color-1-rgb: 5, 150, 105;
+                --chart-color-1-dark: #047857;
+                --chart-color-2: #10b981;
+                --chart-color-2-rgb: 16, 185, 129;
+                --chart-color-3: #34d399;
+                --chart-color-4: #6ee7b7;
+                --chart-color-5: #a7f3d0;
+            }
+
+            [data-theme="purple"] {
+                --chart-color-1: #7c3aed;
+                --chart-color-1-rgb: 124, 58, 237;
+                --chart-color-1-dark: #6d28d9;
+                --chart-color-2: #8b5cf6;
+                --chart-color-2-rgb: 139, 92, 246;
+                --chart-color-3: #a78bfa;
+                --chart-color-4: #c4b5fd;
+                --chart-color-5: #ddd6fe;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+                margin: 0;
+                padding: 20px 22rem;
+                background: #f5f5f5;
+            }
+
+            .dashboard {
+                margin: 0 auto;
+            }
+
+            .header {
+                background: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                margin-bottom: 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+
+            .theme-selector {
+                display: flex;
+                gap: 10px;
+            }
+
+            .theme-btn {
+                padding: 8px 16px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: 500;
+            }
+
+            .metrics-container {
+                display: grid;
+                grid-template-columns: 30% auto;
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+
+            @media (max-width: 768px) {
+                .metrics-container {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .metrics-column {
+                background: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .metrics-column>ul>li{
+                line-height:1.9}
+            .metric-item {
+                margin-bottom: 20px;
+            }
+
+            .metric-value {
+                font-size: 24px;
+                font-weight: bold;
+                color: #165e84f2;
+            }
+
+            .metric-label {
+                color: #666;
+                font-size: 14px;
+            }
+
+            .chart-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+            }
+
+            .chart-container {
+                background: #fff;
+                padding: 20px;
+                margin: 1rem 0;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                height: 400px;
+            }
+
+            
+           
+            .table-container {
+                background: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                margin-top: 20px;
+                overflow-x: auto;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                min-width: 600px;
+            }
+
+            th, td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #eee;
+            }
+
+            th {
+                background: #f8fafc;
+                font-weight: 600;
+            }
+
+            @media (max-width: 1500px) {
+             body{padding: 20px;
+             }}
+            @media (max-width: 768px) {
+                body {
+                    padding: 10px;
+                }
+                
+                .header {
+                    padding: 15px;
+                }
+
+                .chart-container {
+                    height: 300px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="dashboard">
+            <div class="header">
+                <div>
+                    <h1>Анализ данных маркетплейса</h1>
+                    <p>Отчёт сгенерирован - 17.02.2025 03:49 MSK</p>
+                </div>
+                
+            </div>
+
+            <div class="metrics-container">
+                <div class="metrics-column">
+                    <h2>Ключевые значения</h2>
+                    <div class="metric-item">
+                        <div class="metric-value">₽ 4 323 859</div>
+                        <div class="metric-label">Общая выручка</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">44.4%</div>
+                        <div class="metric-label">Средняя маржинальность</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">5 135</div>
+                        <div class="metric-label">Количество заказов</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">₽ 842</div>
+                        <div class="metric-label">Средний чек</div>
+                    </div>
+                </div>
+
+                <div class="metrics-column">
+                    <h2>Ключевые выводы</h2>
+                    <ul>
+                        <li><strong>Динамика заказов:</strong> Стабильный рост</li>
+                        <li><strong>Маржа:</strong> 44.4%</li>
+                        <li><strong>Средний чек:</strong> ₽  842</li>
+                        <li><strong>Эффективность продаж:</strong> <br /> Общее кол.заказов 5 135 > выручка 4 323 859 ₽</li>
+                    </ul>
+                </div>
+            </div>
+
+                <div class="chart-container">
+                    <canvas id="ordersChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="profitChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="storageChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            
+            <div class="table-container">
+                <h2>Топ-10 товаров по выручке</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Артикул</th>
+                            <th>Категория</th>
+                            <th>Выручка</th>
+                            <th>Маржа</th>
+                            <th>Заказов/день</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td>2252229</td>
+                            <td>Стулья</td>
+                            <td>₽ 569,672</td>
+                            <td>39.9%</td>
+                            <td>2.1</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>2121671</td>
+                            <td>Стулья</td>
+                            <td>₽ 455,473</td>
+                            <td>41.9%</td>
+                            <td>1.5</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>2496844</td>
+                            <td>Мочалки</td>
+                            <td>₽ 432,740</td>
+                            <td>47.5%</td>
+                            <td>40.7</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>2572749</td>
+                            <td>Лонгсливы</td>
+                            <td>₽ 377,055</td>
+                            <td>51.6%</td>
+                            <td>7.5</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>9428193</td>
+                            <td>Щетки для стекол</td>
+                            <td>₽ 301,404</td>
+                            <td>40.8%</td>
+                            <td>11.6</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>3176618</td>
+                            <td>Салфетки для уборки</td>
+                            <td>₽ 286,771</td>
+                            <td>45.8%</td>
+                            <td>13.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>5534114</td>
+                            <td>Полотенца банные</td>
+                            <td>₽ 184,895</td>
+                            <td>42.8%</td>
+                            <td>2.1</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>1472848</td>
+                            <td>Швабры</td>
+                            <td>₽ 182,483</td>
+                            <td>18.9%</td>
+                            <td>2.9</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>7059036</td>
+                            <td>Салфетки для уборки</td>
+                            <td>₽ 165,230</td>
+                            <td>31.1%</td>
+                            <td>6.2</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>5767819</td>
+                            <td>Щетки для уборки</td>
+                            <td>₽ 154,677</td>
+                            <td>39.3%</td>
+                            <td>8.4</td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <script>
+            // Функция изменения темы
+            function setTheme(theme) {
+                document.body.setAttribute('data-theme', theme);
+                // Перерисовка графиков
+                Object.values(charts).forEach(chart => chart.update());
+            }
+
+            // Создание графиков
+            const ordersChartData = {"type": "bar", "data": {"labels": ["2024-11-01", "2024-11-02", "2024-11-03", "2024-11-04", "2024-11-05", "2024-11-06", "2024-11-07", "2024-11-08", "2024-11-09", "2024-11-10", "2024-11-11", "2024-11-12", "2024-11-13", "2024-11-14", "2024-11-15", "2024-11-16", "2024-11-17", "2024-11-18", "2024-11-19", "2024-11-20", "2024-11-21", "2024-11-22", "2024-11-23", "2024-11-24", "2024-11-25", "2024-11-26", "2024-11-27", "2024-11-28", "2024-11-29", "2024-11-30"], "datasets": [{"type": "line", "label": "\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u0437\u0430\u043a\u0430\u0437\u043e\u0432", "data": [156, 146, 114, 134, 137, 144, 129, 112, 98, 105, 128, 114, 110, 116, 112, 125, 186, 204, 169, 170, 206, 207, 233, 216, 247, 239, 209, 243, 298, 328], "borderColor": "#817B7B", "backgroundColor": "rgba(76, 175, 80, 0.0)", "yAxisID": "y", "tension": 0.4, "order": 0}, {"type": "bar", "label": "\u0412\u044b\u0440\u0443\u0447\u043a\u0430", "data": [134623.68, 118132.27, 94138.61, 96795.44, 79555.42, 88736.45, 98110.38, 108287.58, 113146.39, 96900.31, 115826.44, 91420.83, 104137.59, 103767.45, 77803.44, 96382.28, 200374.88, 138599.7, 209066.16, 153541.75, 241073.9, 160301.69, 308558.03, 130647.59, 197295.42, 194263.02, 164987.02, 145412.72, 170281.5, 291690.57], "backgroundColor": "#0E9AA7", "borderColor": "rgba(76, 175, 80, 0.0)", "borderWidth": 1, "yAxisID": "y1", "order": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "interaction": {"mode": "index", "intersect": false}, "plugins": {"title": {"display": true, "text": "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u0437\u0430\u043a\u0430\u0437\u043e\u0432 \u0438 \u0432\u044b\u0440\u0443\u0447\u043a\u0438"}, "tooltip": {"mode": "index", "intersect": false}, "datalabels": {"display": false}}, "scales": {"y": {"type": "linear", "display": true, "position": "left", "title": {"display": true, "text": "\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u0437\u0430\u043a\u0430\u0437\u043e\u0432"}, "grid": {"drawOnChartArea": false}}, "y1": {"type": "linear", "display": true, "position": "right", "title": {"display": true, "text": "\u0412\u044b\u0440\u0443\u0447\u043a\u0430 (\u20bd)"}, "grid": {"drawOnChartArea": true}}}}};
+            const profitChartData = {"type": "bar", "data": {"labels": ["\u0421\u0442\u0443\u043b\u044c\u044f\n\u042d\u043a\u043e\u043c\u0435\u0431\u0435\u043b\u044c\n(\u0430\u0440\u0442. 2252229)", "\u041c\u043e\u0447\u0430\u043b\u043a\u0438\nYORK\n(\u0430\u0440\u0442. 2496844)", "\u041b\u043e\u043d\u0433\u0441\u043b\u0438\u0432\u044b\nFlavour knit Gymnastic\n(\u0430\u0440\u0442. 2572749)", "\u0421\u0442\u0443\u043b\u044c\u044f\n\u042d\u043a\u043e\u043c\u0435\u0431\u0435\u043b\u044c\n(\u0430\u0440\u0442. 2121671)", "\u0421\u0430\u043b\u0444\u0435\u0442\u043a\u0438 \u0434\u043b\u044f \u0443\u0431\u043e\u0440\u043a\u0438\nYORK\n(\u0430\u0440\u0442. 3176618)"], "datasets": [{"label": "\u041f\u0440\u0438\u0431\u044b\u043b\u044c", "data": [321281.0, 302853.41, 286895.0, 266194.44999999995, 187190.75], "backgroundColor": "#A4D4D8", "borderColor": "#21585D", "borderWidth": 1}]}, "options": {"indexAxis": "y", "responsive": true, "maintainAspectRatio": false, "plugins": {"datalabels": {"display": false}, "title": {"display": true, "text": "\u0422\u043e\u043f-5 \u0442\u043e\u0432\u0430\u0440\u043e\u0432 \u043f\u043e \u043f\u0440\u0438\u0431\u044b\u043b\u0438"}, "legend": {"position": "top"}}, "scales": {"x": {"beginAtZero": true, "title": {"display": true, "text": "\u041f\u0440\u0438\u0431\u044b\u043b\u044c (\u20bd)"}}}}};
+            const storageChartData = {"type": "line", "data": {"labels": ["2024-11-01", "2024-11-02", "2024-11-03", "2024-11-04", "2024-11-05", "2024-11-06", "2024-11-07", "2024-11-08", "2024-11-09", "2024-11-10", "2024-11-11", "2024-11-12", "2024-11-13", "2024-11-14", "2024-11-15", "2024-11-16", "2024-11-17", "2024-11-18", "2024-11-19", "2024-11-20", "2024-11-21", "2024-11-22", "2024-11-23", "2024-11-24", "2024-11-25", "2024-11-26", "2024-11-27", "2024-11-28", "2024-11-29", "2024-11-30"], "datasets": [{"label": "\u0421\u0442\u043e\u0438\u043c\u043e\u0441\u0442\u044c \u0445\u0440\u0430\u043d\u0435\u043d\u0438\u044f", "data": [5579.88762479992, 5458.77350359991, 5404.74374834997, 5234.79973842503, 5041.16257225003, 4890.42037180003, 4783.44383869996, 4703.2709021499995, 4603.16968351018, 4460.04622101, 4405.26915451, 4256.313361235, 4040.40982595011, 3922.61562817511, 3857.86332065011, 3766.28646677511, 3689.77460505011, 3600.165029425, 3564.5501179, 3528.0218406875, 3454.4678259625, 4813.9548509, 4899.3237808, 4830.02684635, 4736.5483718, 4637.0958000499995, 4507.937479075, 4454.24417735, 4416.2461714, 4356.49647125], "borderColor": "#FE8A71", "backgroundColor": "rgba(156, 39, 176, 0.0)", "tension": 0.4}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u0441\u0442\u043e\u0438\u043c\u043e\u0441\u0442\u0438 \u0445\u0440\u0430\u043d\u0435\u043d\u0438\u044f"}, "datalabels": {"display": false}}, "scales": {"y": {"beginAtZero": true, "title": {"display": true, "text": "\u0421\u0442\u043e\u0438\u043c\u043e\u0441\u0442\u044c (\u20bd)"}}, "x": {"title": {"display": true, "text": "\u0414\u0430\u0442\u0430"}}}}};
+            const categoryChartData = {"type": "doughnut", "data": {"labels": ["\u041c\u043e\u0447\u0430\u043b\u043a\u0438", "\u0421\u0430\u043b\u0444\u0435\u0442\u043a\u0438 \u0434\u043b\u044f \u0443\u0431\u043e\u0440\u043a\u0438", "\u0429\u0435\u0442\u043a\u0438 \u0434\u043b\u044f \u0441\u0442\u0435\u043a\u043e\u043b", "\u0429\u0435\u0442\u043a\u0438 \u043a\u043e\u0441\u043c\u0435\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0435", "\u0414\u0440\u0443\u0433\u0438\u0435 \u043a\u0430\u0442\u0435\u0433\u043e\u0440\u0438\u0438"], "datasets": [{"data": [21.632147282704903, 18.56965834661002, 11.134714108691805, 10.780669144981413, 84.08567888121792], "backgroundColor": ["#F6CD61", "#A4D4D8", "#0E9AA7", "#FE8A71", "#817B7B"], "borderColor": ["#F6CD61", "#A4D4D8", "#0E9AA7", "#FE8A71", "#817B7B"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"datalabels": {"display": false}, "title": {"display": true, "text": "\u0420\u0430\u0441\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u0438\u0435 \u043f\u043e \u043a\u0430\u0442\u0435\u0433\u043e\u0440\u0438\u044f\u043c"}, "legend": {"position": "top"}}}};
+
+            const charts = {};
+
+            // Функция для создания графика
+            function createChart(canvasId, chartConfig) {
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                charts[canvasId] = new Chart(ctx, chartConfig);
+                return charts[canvasId];
+            }
+
+            // Создание всех графиков
+            createChart('ordersChart', ordersChartData);
+            createChart('profitChart', profitChartData);
+            createChart('storageChart', storageChartData);
+            createChart('categoryChart', categoryChartData);
+        </script>
+    </body>
+    </html>
+    
